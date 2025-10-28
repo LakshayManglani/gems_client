@@ -9,5 +9,20 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  app: {
+    head: {
+      title: 'Gems',
+      htmlAttrs: {
+        lang: 'en',
+      },
+    },
+  },
+  appConfig: {
+    ui: {
+      colors: {
+        primary: 'blue',
+        neutral: 'neutral',
+      },
+    },
+  },
 });
-
