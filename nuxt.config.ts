@@ -25,4 +25,34 @@ export default defineNuxtConfig({
       },
     },
   },
+  routeRules: {
+    "/gems": {
+      swr: 5,
+    }
+  },
+
+  runtimeConfig: {
+    public: {
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
+      apiBase: process.env.NUXT_PUBLIC_API_BASE,
+    },
+  },
+
+  nitro: {
+    devProxy: {
+      '/api': {
+        target: process.env.NUXT_API_PROXY_TARGET,
+        changeOrigin: true,
+        cookieDomainRewrite: {
+          '*': '',
+        },
+      },
+    },
+
+    routeRules: {
+      '/api/**': {
+        proxy: process.env.NUXT_API_PROXY_TARGET + '/**',
+      },
+    },
+  },
 });

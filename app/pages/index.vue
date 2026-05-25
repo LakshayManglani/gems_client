@@ -1,5 +1,3 @@
 <template>
-  <div>
-    <h1>Hello World!</h1>
-  </div>
+  <UButton to="/gems" label="View Gems" />
 </template>
