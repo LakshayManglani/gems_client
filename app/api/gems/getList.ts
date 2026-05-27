@@ -38,7 +38,7 @@ interface Response {
 }
 
 export default async function getList(queryParam: QueryParams) {
-  const response = await api<Response>('/gems', {
+  const response = await api<Response>('/v1/gems', {
     method: 'GET',
     query: queryParam,
   });

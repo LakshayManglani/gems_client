@@ -10,7 +10,7 @@ type Response = Gem;
 
 export default async function getById(pathParam: PathParams) {
 
-  const response = await api<Response>(`/gems/${pathParam.id}`, {
+  const response = await api<Response>(`/v1/gems/${pathParam.id}`, {
     method: 'GET',
   });
 
