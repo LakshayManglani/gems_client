@@ -7,13 +7,15 @@ if (!gem.value) {
   throw new Error('Gem not found')
 }
 
-const primaryImage = gem.value.images.find((image) => image.id === gem.value?.thumbnail_image_id);
+const primaryImage = gem.value.assets.find((asset) => asset.type === 'image');
 
 if (!primaryImage) {
   throw new Error('Image not found')
 }
 
-const selectedImage = ref(primaryImage.url);
+const selectedAssetId = ref(primaryImage.id);
+
+const selectedAsset = computed(() => gem.value?.assets.find((asset) => asset.id === selectedAssetId.value))
 </script>
 
 <template>
@@ -31,8 +33,11 @@ const selectedImage = ref(primaryImage.url);
           <!-- Main Image -->
           <UCard :ui="{ body: 'p-0' }" class="overflow-hidden">
             <div class="aspect-square bg-gray-100 dark:bg-gray-800">
-              <img v-if="selectedImage" :src="selectedImage" :alt="gem.inventory_code"
+              <img v-if="selectedAssetId && selectedAsset && selectedAsset.type === 'image'"
+                :src="selectedAsset.image?.url" :alt="selectedAsset.image?.alt_text ?? undefined"
                 class="h-full w-full object-cover" />
+              <video v-else-if="selectedAssetId && selectedAsset && selectedAsset.type === 'video'"
+                :src="selectedAsset.video?.url" controls playsinline class="h-full w-full object-cover" />
 
               <div v-else class="flex h-full items-center justify-center text-sm text-gray-400">
                 No image available
@@ -41,14 +46,21 @@ const selectedImage = ref(primaryImage.url);
           </UCard>
 
           <!-- Thumbnails -->
-          <div v-if="gem.images.length > 1" class="grid grid-cols-4 gap-3">
-            <button v-for="image in gem.images" :key="image.id" type="button"
-              class="overflow-hidden rounded-lg border-2 transition" :class="selectedImage === image.url
+          <div v-if="gem.assets.length > 1" class="grid grid-cols-4 gap-3">
+            <button v-for="asset in gem.assets" :key="asset.id" type="button"
+              class="overflow-hidden rounded-lg border-2 transition" :class="selectedAssetId === asset.id
                 ? 'border-primary'
                 : 'border-transparent'
-                " @click="selectedImage = image.url">
-              <img :src="image.url" :alt="image.alt_text || gem.inventory_code"
-                class="aspect-square w-full object-cover" />
+                " @click="selectedAssetId = asset.id">
+              <img v-if="asset.type === 'image'" :src="asset.image?.url"
+                :alt="asset.image?.alt_text || gem.inventory_code" class="aspect-square w-full object-cover" />
+              <div v-else class="relative aspect-square">
+                <video :src="asset.video?.url" muted preload="metadata" class="h-full w-full object-cover" />
+
+                <div class="absolute inset-0 flex items-center justify-center bg-black/20">
+                  <UIcon name="i-lucide-play-circle" class="h-10 w-10 text-white" />
+                </div>
+              </div>
             </button>
           </div>
         </div>
@@ -66,7 +78,7 @@ const selectedImage = ref(primaryImage.url);
             </h1>
 
             <p class="mt-3 text-3xl font-semibold">
-              ₹{{ gem.price }}
+              ₹{{ gem.price }}/ct
             </p>
           </div>
 

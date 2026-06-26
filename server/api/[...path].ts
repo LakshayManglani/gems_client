@@ -11,11 +11,15 @@ export default defineEventHandler((event) => {
     });
   }
 
-  const target = `${config.apiBase}/${path}`;
+
+  const originalUrl = getRequestURL(event)
+
+  const target = new URL(`${config.apiBase}/${path}`)
+  target.search = originalUrl.search
 
 
   return proxyRequest(
     event,
-    target
+    target.toString()
   )
 })

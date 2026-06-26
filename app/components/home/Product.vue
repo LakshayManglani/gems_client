@@ -12,7 +12,7 @@ if (!gem) {
   throw new Error('Gem not found')
 }
 
-const primaryImage = gem.images.find((image) => image.id === gem.thumbnail_image_id);
+const primaryImage = gem.assets.find((asset) => asset.type === 'image');
 
 if (!primaryImage) {
   throw new Error('Image not found')
@@ -25,7 +25,7 @@ if (!primaryImage) {
     <!-- Image -->
     <NuxtLink :to="`/gems/${gem.id}`"
       class="relative aspect-square overflow-hidden rounded-lg group-hover:rounded-b-none duration-300">
-      <img :src="primaryImage.url"
+      <img :src="primaryImage.image?.url"
         class="aspect-square object-cover w-full transition-transform duration-300 scale-120 group-hover:scale-200" />
     </NuxtLink>
 

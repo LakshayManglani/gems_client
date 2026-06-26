@@ -1,11 +1,54 @@
 
 import type { GemClarity, GemShape, GemVariety } from "~/schema/gems";
 
-export interface GemImage {
+export interface Asset {
+  id: string;
+
+  // Identity
+  type: "image" | "video";
+  isDeleted: boolean;
+  orderIndex: number;
+  mimeType: string;
+
+  // Relations
+  gemId: string;
+  image: AssetImage | null;
+  video: AssetVideo | null;
+
+  // System
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface AssetImage {
   id: string,
-  url: string,
-  public_id: string,
-  alt_text: string | null,
+
+  // Identity
+  url: string;
+  public_id: string;
+  alt_text: string | null;
+
+  // Relations
+  assetId: string;
+
+  // System
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface AssetVideo {
+  id: string;
+
+  // Identity
+  url: string;
+  public_id: string;
+
+  // Relations
+  assetId: string;
+
+  // System
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface Gem {
@@ -25,14 +68,11 @@ export interface Gem {
   // Commercial
   price: number;
 
-  // Arrays
-  image_order: GemImage['id'][];
+  // Nested assets 
+  assets: Asset[];
 
   // Relations
-  thumbnail_image_id: GemImage['id'];
-
-  // Nested images
-  images: GemImage[];
+  featuredAssetId: string | null;
 
   // System
   created_at: Date;
