@@ -61,9 +61,7 @@ const weightMin = 0.01;
 const weightMax = 10;
 
 const priceMin = 1;
-const priceMax = 10_000;
-
-
+const priceMax = 1_00_000;
 
 const selectedShapes = ref<GemShape[]>([]);
 const selectedVarieties = ref<GemVariety[]>([]);
@@ -176,7 +174,7 @@ function updatePage(page: number) {
               <div class="text-highlighted font-semibold">Filters</div>
               <div v-if="pagination" class="text-sm text-muted">{{ pagination.page * pagination.limit -
                 pagination.limit + 1
-                }}-{{ pagination.page * pagination.limit }} of
+              }}-{{ pagination.page * pagination.limit }} of
                 over {{ pagination.total }}
                 results</div>
             </div>
@@ -229,7 +227,7 @@ function updatePage(page: number) {
             class="fixed top-16 inset-x-0 z-50 flex gap-2 flex-wrap justify-between items-center p-4 bg-default lg:hidden border-b border-default">
             <div v-if="pagination" class="text-sm text-muted">{{ pagination.page * pagination.limit -
               pagination.limit + 1
-              }}-{{ pagination.page * pagination.limit }} of
+            }}-{{ pagination.page * pagination.limit }} of
               over {{ pagination.total }}
               results</div>
 
@@ -286,7 +284,7 @@ function updatePage(page: number) {
         </ul>
 
         <UPagination v-if="pagination && pagination.total" :page="pagination.page" :items-per-page="pagination.limit"
-          :total="pagination.total" :to="updatePage" :sibling-count="1" class="mx-auto w-min" />
+          :total="pagination.total" :to="updatePage" :sibling-count="1" class="mx-auto w-min mb-8" />
       </div>
     </UPage>
   </UContainer>

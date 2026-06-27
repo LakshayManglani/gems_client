@@ -36,8 +36,9 @@ const selectedAsset = computed(() => gem.value?.assets.find((asset) => asset.id 
               <img v-if="selectedAssetId && selectedAsset && selectedAsset.type === 'image'"
                 :src="selectedAsset.image?.url" :alt="selectedAsset.image?.alt_text ?? undefined"
                 class="h-full w-full object-cover" />
-              <video v-else-if="selectedAssetId && selectedAsset && selectedAsset.type === 'video'"
-                :src="selectedAsset.video?.url" controls playsinline class="h-full w-full object-cover" />
+              <video v-else-if="selectedAssetId && selectedAsset && selectedAsset.type === 'video'" autoplay loop
+                :src="selectedAsset.video?.url" controls playsinline muted class="h-full w-full object-cover"
+                preload="auto" />
 
               <div v-else class="flex h-full items-center justify-center text-sm text-gray-400">
                 No image available

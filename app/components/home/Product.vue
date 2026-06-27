@@ -32,16 +32,20 @@ if (!primaryImage) {
     <!-- Content -->
     <div class="p-4 pt-2">
       <NuxtLink :to="`/gems/${gem.id}`" class="block">
+        <p class="line-clamp-2 text-xl text-primary font-medium group-hover:underline">
+          ₹{{ gem.price }}/ct
+        </p>
         <p class="line-clamp-2 text-primary font-medium group-hover:underline">
           {{ gem.weight }} ct
         </p>
       </NuxtLink>
 
-      <p class="flex gap-1 text-sm text-muted">
-        {{ lowerCase(gem.variety) }}
-        {{ lowerCase(gem.clarity) }}
+      <p class="flex gap-1 text-sm text-muted flex-wrap">
+        <span>{{ lowerCase(gem.variety) }} </span>
         <span>•</span>
-        {{ lowerCase(gem.shape) }}
+        <span>{{ lowerCase(gem.clarity) }} </span>
+        <span>•</span>
+        <span>{{ lowerCase(gem.shape) }}</span>
       </p>
     </div>
   </article>
