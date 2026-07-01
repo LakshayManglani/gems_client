@@ -37,12 +37,15 @@ interface Response {
   pagination: Pagination;
 }
 
-export default async function getList(queryParam: QueryParams) {
+export default async function getList(queryParam: QueryParams, signal?: AbortSignal) {
   const response = await api<Response>('/v1/gems', {
     method: 'GET',
-    query: queryParam,
+    query: {
+      ...queryParam,
+      limit: 3
+    },
+    signal,
   });
-
 
   return {
     ...response,

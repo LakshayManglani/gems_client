@@ -56,14 +56,14 @@ export const useGemsListStore = defineStore('gems:list', {
     },
   },
   actions: {
-    async fetchPage(queryParam: QueryParam, hard?: boolean) {
+    async fetchPage(queryParam: QueryParam, hard?: boolean, signal?: AbortSignal) {
       const key = this.pageKey(queryParam);
 
       if (!hard && this.hasPage(key)) return
 
       this.loading = true;
 
-      const response = await api.gems.getList(queryParam);
+      const response = await api.gems.getList(queryParam, signal);
 
       const gemStore = useGemsStore();
       gemStore.upsertMany(response.items);

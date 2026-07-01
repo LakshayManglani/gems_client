@@ -1,170 +1,116 @@
 <script setup lang="ts">
-import type { AccordionItem } from '@nuxt/ui';
-import gemsSchema, { type GemClarity, type GemShape, type GemVariety } from '~/schema/gems';
+import GemFilters from '~/components/filters/GemFilters.vue';
+import OptionsFilter from '~/components/filters/OptionsFilter.vue';
+import RangeFilter from '~/components/filters/RangeFilter.vue';
+import { useGemFilters } from '~/composables/filters/useGemFilters';
 
 const router = useRouter();
 const route = useRoute();
 
+const gemsListStore = useGemsListStore();
 
-const { products: rawProducts, pagination } = await useProductsPageModel();
+const gemFilters = useGemFilters();
+const {
+  price,
+  weight,
+  variety,
+  varietyItems,
+  shape,
+  shapeItems,
+  clarity,
+  clarityItems,
+  pagination,
+  query,
+  paginationQuery,
+  initialize,
+  updateRoute,
+  reset
+} = gemFilters;
 
 
-const products = computed(() => (rawProducts.value === undefined ? [] : rawProducts.value).filter((item) => !!item));
+if (import.meta.server) {
+  initialize()
+}
 
+if (import.meta.client) {
+  callOnce(() => {
+    initialize();
+    updateRoute();
+  });
+}
 
-const items = ref<AccordionItem[]>([
-  {
-    label: 'Price',
-    slot: 'price' as const,
+const { data, pending, refresh } = useAsyncData(
+  'products',
+  async (_, { signal }) => {
+    await gemsListStore.fetchPage(query.value, false, signal);
+
+    const key = gemsListStore.pageKey(query.value);
+    return {
+      products: gemsListStore.getPageProducts(key) ?? [],
+      pagination: gemsListStore.getPageMeta(key)
+    };
   },
   {
-    label: 'Variety',
-    slot: 'variety' as const,
-  },
-  {
-    label: 'Weight (ct)',
-    slot: 'weight' as const,
-  },
-  {
-    label: 'Shape',
-    slot: 'shape' as const,
-  },
-  {
-    label: 'Clarity',
-    slot: 'clarity' as const,
-  },
-]);
-
-
-const active = ref(['0', '1']);
-
-const shapeItems = ref([...gemsSchema.shape.map((shape) => {
-  return {
-    label: lowerCase(shape.replaceAll('_', ' ')),
-    value: shape,
-  };
-})]);
-const varietyItems = ref([...gemsSchema.variety.map((variety) => {
-  return {
-    label: lowerCase(variety.replaceAll('_', ' ')),
-    value: variety,
-  };
-})]);
-const clarityItems = ref([...gemsSchema.clarity.map((clarity) => {
-  return {
-    label: lowerCase(clarity.replaceAll('_', ' ')),
-    value: clarity,
-  };
-})]);
-
-const weightMin = 0.01;
-const weightMax = 10;
-
-const priceMin = 1;
-const priceMax = 1_00_000;
-
-const selectedShapes = ref<GemShape[]>([]);
-const selectedVarieties = ref<GemVariety[]>([]);
-const selectedClarities = ref<GemClarity[]>([]);
-const weight = ref([weightMin, weightMax]);
-const price = ref([priceMin, priceMax]);
-
-onMounted(() => {
-  if (route.query.shape) {
-    selectedShapes.value = String(route.query.shape).split(',') as GemShape[];
+    dedupe: 'cancel'
   }
+)
 
-  if (route.query.variety) {
-    selectedVarieties.value = String(route.query.variety).split(',') as GemVariety[];
-  }
+// update all other query which depends upon pagination
+watch(paginationQuery, (query) => {
+  router.replace({
+    query: {
+      ...query,
+      page: 1,
+    }
+  })
+})
 
-  if (route.query.clarity) {
-    selectedClarities.value = String(route.query.clarity).split(',') as GemClarity[];
-  }
-
-  const weightMinQuery = Number(route.query.weight_min);
-  const weightMaxQuery = Number(route.query.weight_max);
-
-  if (!Number.isNaN(weightMinQuery)) {
-    weight.value = [weightMinQuery, weight.value[1] ?? weightMax];
-  }
-
-  if (!Number.isNaN(weightMaxQuery)) {
-    weight.value = [weight.value[0] ?? weightMin, weightMaxQuery];
-  }
-
-  const priceMinQuery = Number(route.query.price_min);
-  const priceMaxQuery = Number(route.query.price_max);
-
-
-  if (!Number.isNaN(priceMinQuery)) {
-    price.value = [priceMinQuery, price.value[1] ?? priceMax];
-  }
-
-  if (!Number.isNaN(priceMaxQuery)) {
-    price.value = [price.value[0] ?? priceMin, priceMaxQuery];
-  }
-});
-
-watch(
-  [
-    selectedShapes,
-    selectedVarieties,
-    selectedClarities,
-    weight,
-    price
-  ],
-  () => {
-    router.replace({
-      query: {
-        ...route.query,
-        shape: selectedShapes.value.length
-          ? selectedShapes.value.sort().join(',')
-          : undefined,
-
-        variety: selectedVarieties.value.length
-          ? selectedVarieties.value.sort().join(',')
-          : undefined,
-
-        clarity: selectedClarities.value.length
-          ? selectedClarities.value.sort().join(',')
-          : undefined,
-
-        weight_min: weight.value[0],
-        weight_max: weight.value[1],
-
-        price_min: price.value[0],
-        price_max: price.value[1],
-      },
-    });
-  },
-  {
-    deep: true,
-  },
-);
-
-
-const checkboxGroupUi = {
-  fieldset: 'pb-3.5 grid grid-cols-2 gap-2',
-  container: 'hidden',
-  item: 'text-center flex items-center',
-};
-
-function updatePage(page: number) {
-  return {
+// update page
+watch(pagination.query, (query) => {
+  router.push({
     query: {
       ...route.query,
-      page: page,
-    },
-  };
-}
+      ...query,
+    }
+  })
+})
+
+// initialize state if route.query changes
+// this case is for when user goes back/forward in history
+watch(
+  () => route.query,
+  initialize
+)
+
+// call api if query is not changed after some time-frame
+watchDebounced(
+  query,
+  refresh,
+  {
+    debounce: 200,
+  }
+)
+
+const paginationText = computed(() => {
+  const pagination = data.value?.pagination;
+
+  if (!pagination || pagination.total === 0) {
+    return "0 results";
+  }
+
+  const start = (pagination.page - 1) * pagination.limit + 1;
+  const end = Math.min(pagination.page * pagination.limit, pagination.total);
+
+  return `${start}-${end} of ${pagination.total} results`;
+});
+
 </script>
 
 <template>
   <UContainer>
     <UPage :ui="{
       root: 'lg:flex lg:flex-row',
-      left: 'max-w-75 w-full',
+      left: 'max-w-xs w-full',
       center: 'flex-1',
     }">
       <template #left>
@@ -172,119 +118,55 @@ function updatePage(page: number) {
           <div class="space-y-4">
             <div>
               <div class="text-highlighted font-semibold">Filters</div>
-              <div v-if="pagination" class="text-sm text-muted">{{ pagination.page * pagination.limit -
-                pagination.limit + 1
-              }}-{{ pagination.page * pagination.limit }} of
-                over {{ pagination.total }}
-                results</div>
+              <div class="text-sm text-muted">
+                {{ paginationText }}
+              </div>
             </div>
             <div>
               <USeparator />
 
-              <UAccordion :items="items" type="multiple" :default-value="active">
-
-                <template #price>
-                  <UFormField :description="`${priceMin} - ${priceMax}`" class="pb-3.5">
-                    <div class="px-1">
-                      <USlider v-model="price" :min="priceMin" :max="priceMax" :step="10" />
-                    </div>
-                  </UFormField>
-                </template>
-
-                <template #weight>
-                  <UFormField :description="`${weightMin} - ${weightMax}`" class="pb-3.5">
-                    <div class="px-1">
-                      <USlider v-model="weight" :min="weightMin" :max="weightMax" :step="0.01" />
-                    </div>
-                  </UFormField>
-                </template>
-
-                <template #shape>
-                  <UCheckboxGroup v-model="selectedShapes" color="primary" variant="card" :items="shapeItems" size="sm"
-                    :ui="checkboxGroupUi" />
-                </template>
-
-                <template #variety>
-                  <UCheckboxGroup v-model="selectedVarieties" color="primary" variant="card" :items="varietyItems"
-                    size="sm" :ui="checkboxGroupUi" />
-                </template>
-
-                <template #clarity>
-                  <UCheckboxGroup v-model="selectedClarities" color="primary" variant="card" :items="clarityItems"
-                    size="sm" :ui="checkboxGroupUi" />
-                </template>
-              </UAccordion>
+              <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems"
+                :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" />
             </div>
           </div>
         </UPageAside>
       </template>
 
-      <div class="mt-8 relative">
+      <div class="mt-8 relative h-full">
         <div class="relative">
           <div class="lg:hidden h-16" />
 
           <div
             class="fixed top-16 inset-x-0 z-50 flex gap-2 flex-wrap justify-between items-center p-4 bg-default lg:hidden border-b border-default">
-            <div v-if="pagination" class="text-sm text-muted">{{ pagination.page * pagination.limit -
-              pagination.limit + 1
-            }}-{{ pagination.page * pagination.limit }} of
-              over {{ pagination.total }}
-              results</div>
 
-            <USlideover title="Filters" description="1-20 of over 200 results">
+            <div class="text-sm text-muted">
+              {{ paginationText }}
+            </div>
+
+            <USlideover title="Filters" :description="paginationText">
               <UButton label="Filters" variant="subtle" color="neutral" class="lg:hidden" />
 
               <template #body>
-                <div class="space-y-4">
-                  <div>
-                    <UAccordion :items="items" type="multiple" :default-value="active">
-                      <template #price>
-                        <UFormField :description="`${priceMin} - ${priceMax}`" class="pb-3.5">
-                          <div class="px-1">
-                            <USlider v-model="price" :min="priceMin" :max="priceMax" :step="10" />
-                          </div>
-                        </UFormField>
-                      </template>
-
-                      <template #weight>
-                        <UFormField :description="`${weightMin} - ${weightMax}`" class="pb-3.5">
-                          <div class="px-1">
-                            <USlider v-model="weight" :min="weightMin" :max="weightMax" :step="0.01" />
-                          </div>
-                        </UFormField>
-                      </template>
-
-
-                      <template #shape>
-                        <UCheckboxGroup v-model="selectedShapes" color="primary" variant="card" :items="shapeItems"
-                          size="sm" :ui="checkboxGroupUi" />
-                      </template>
-
-                      <template #variety>
-                        <UCheckboxGroup v-model="selectedVarieties" color="primary" variant="card" :items="varietyItems"
-                          size="sm" :ui="checkboxGroupUi" />
-                      </template>
-
-                      <template #clarity>
-                        <UCheckboxGroup v-model="selectedClarities" color="primary" variant="card" :items="clarityItems"
-                          size="sm" :ui="checkboxGroupUi" />
-                      </template>
-                    </UAccordion>
-                  </div>
-                </div>
+                <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems"
+                  :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" />
               </template>
             </USlideover>
           </div>
         </div>
 
-        <ul class="grid grid-cols-[repeat(auto-fill,minmax(256px,1fr))] gap-8">
-          <li v-for="gem in products" :key="gem.id">
+        <ul v-show="data && data.products.length" class="grid grid-cols-[repeat(auto-fill,minmax(256px,1fr))] gap-8">
+          <li v-for="gem in data?.products" :key="gem.id">
             <HomeProduct :gem-id="gem.id" />
           </li>
         </ul>
+        <div v-show="data && !data.products.length" class="flex justify-center items-center h-full flex-col">
+          <p>No Results Found</p>
+          <UButton @click="reset" label="Reset Filters" />
+        </div>
 
-        <UPagination v-if="pagination && pagination.total" :page="pagination.page" :items-per-page="pagination.limit"
-          :total="pagination.total" :to="updatePage" :sibling-count="1" class="mx-auto w-min mb-8" />
+        <UPagination v-if="data && data.pagination && data.pagination.total" v-model:page="pagination.model.value"
+          :items-per-page="data.pagination.limit" :total="data.pagination.total" :sibling-count="1"
+          class="mx-auto w-min mb-8 mt-8" />
       </div>
     </UPage>
   </UContainer>
