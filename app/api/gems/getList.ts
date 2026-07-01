@@ -42,7 +42,7 @@ export default async function getList(queryParam: QueryParams, signal?: AbortSig
     method: 'GET',
     query: {
       ...queryParam,
-      limit: 3
+      limit: 8
     },
     signal,
   });

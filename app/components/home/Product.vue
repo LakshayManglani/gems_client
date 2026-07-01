@@ -21,32 +21,40 @@ if (!primaryImage) {
 
 <template>
   <article
-    class="group flex flex-col rounded-lg transition hover:shadow-md border border-transparent hover:border-accented duration-300">
+    class="group flex flex-col overflow-hidden rounded-xl border border-default bg-default transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+
     <!-- Image -->
-    <NuxtLink :to="`/gems/${gem.id}`"
-      class="relative aspect-square overflow-hidden rounded-lg group-hover:rounded-b-none duration-300">
-      <img :src="primaryImage.image?.url"
-        class="aspect-square object-cover w-full transition-transform duration-300 scale-120 group-hover:scale-200" />
+    <NuxtLink :to="`/gems/${gem.id}`" class="relative aspect-square overflow-hidden">
+      <img :src="primaryImage.image?.url" class="aspect-square object-cover object-center w-full scale-150" />
+
+      <UBadge color="neutral" variant="solid" class="absolute bottom-2 left-2 bg-inverted/50 backdrop-blur">
+        <UIcon name="i-lucide-gem" />
+        <span>{{ lowerCase(gem.variety) }}</span>
+      </UBadge>
     </NuxtLink>
 
     <!-- Content -->
-    <div class="p-4 pt-2">
+    <div class="p-4">
       <NuxtLink :to="`/gems/${gem.id}`" class="block">
-        <p class="line-clamp-2 text-xl text-primary font-medium group-hover:underline">
-          ₹{{ gem.price }}/ct
+        <p class="text-2xl text-highlighted font-semibold leading-tight">
+          ₹{{ gem.price }}
         </p>
-        <p class="line-clamp-2 text-primary font-medium group-hover:underline">
-          {{ gem.weight }} ct
-        </p>
+        <p class="text-sm text-muted">per carat</p>
       </NuxtLink>
 
-      <p class="flex gap-1 text-sm text-muted flex-wrap">
-        <span>{{ lowerCase(gem.variety) }} </span>
-        <span>•</span>
-        <span>{{ lowerCase(gem.clarity) }} </span>
-        <span>•</span>
-        <span>{{ lowerCase(gem.shape) }}</span>
-      </p>
+      <USeparator class="my-3" />
+
+      <div class="flex gap-1 text-sm text-muted flex-wrap justify-between items-center ">
+        <div class="flex items-center justify-center gap-2">
+          <UIcon name="i-lucide-weight" />
+          <span class="text-highlighted">{{ gem.weight }} ct</span>
+        </div>
+
+        <div class="flex items-center justify-center gap-2">
+          <UIcon name="i-lucide-shapes" />
+          <span class="text-highlighted">{{ lowerCase(gem.shape) }} </span>
+        </div>
+      </div>
     </div>
   </article>
 </template>

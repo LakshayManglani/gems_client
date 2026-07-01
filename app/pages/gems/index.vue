@@ -82,6 +82,13 @@ watch(
   initialize
 )
 
+watch(query, () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
+});
+
 // call api if query is not changed after some time-frame
 watchDebounced(
   query,

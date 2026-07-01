@@ -26,7 +26,7 @@ export default defineNuxtConfig({
     ui: {
       colors: {
         primary: 'blue',
-        neutral: 'neutral',
+        neutral: 'zinc',
       },
     },
   },
