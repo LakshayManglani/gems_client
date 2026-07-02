@@ -17,6 +17,16 @@ const primaryImage = gem.assets.find((asset) => asset.type === 'image');
 if (!primaryImage) {
   throw new Error('Image not found')
 }
+
+const price = computed(() => formatPrice(gem.price));
+
+const formatPrice = (value: number) =>
+  new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+  }).format(value)
 </script>
 
 <template>
@@ -37,7 +47,7 @@ if (!primaryImage) {
     <div class="p-4">
       <NuxtLink :to="`/gems/${gem.id}`" class="block">
         <p class="text-2xl text-highlighted font-semibold leading-tight">
-          ₹{{ gem.price }}
+          {{ price }}
         </p>
         <p class="text-sm text-muted">per carat</p>
       </NuxtLink>

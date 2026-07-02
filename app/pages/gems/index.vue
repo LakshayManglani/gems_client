@@ -31,9 +31,10 @@ if (import.meta.server) {
 
 if (import.meta.client) {
   initialize();
-  await updateRoute();
+  callOnce(async () => {
+    await updateRoute();
+  })
 }
-
 
 const { data, refresh, status } = await useAsyncData(
   'products',
@@ -52,8 +53,11 @@ const { data, refresh, status } = await useAsyncData(
   }
 )
 
+
+const isInitializingFromRoute = ref(false)
 // update all other query which depends upon pagination
 watch(paginationQuery, () => {
+  if (isInitializingFromRoute.value) return
   if (pagination.model.value !== 1) {
     pagination.reset();
   }
@@ -63,7 +67,13 @@ watch(paginationQuery, () => {
 // this case is for when user goes back/forward in history
 watch(
   () => route.query,
-  initialize
+  () => {
+    isInitializingFromRoute.value = true
+    initialize()
+    nextTick(() => {
+      isInitializingFromRoute.value = false
+    })
+  }
 )
 
 watch(query, () => {
@@ -74,14 +84,17 @@ watch(query, () => {
 });
 
 // call api if query is not changed after some time-frame
+let requestId = 0;
 watchDebounced(
   query,
   async () => {
+    const id = ++requestId;
     const currentQuery = { ...query.value };
 
     await refresh()
 
-    if (status.value !== "success") return
+    if (id !== requestId) return;
+    if (status.value !== "success") return;
 
     await navigateTo({
       query: currentQuery
@@ -111,14 +124,14 @@ const paginationText = computed(() => {
   <UContainer class="min-h-[calc(100vh-var(--ui-header-height))]">
     <UPage :ui="{
       root: 'lg:flex lg:flex-row min-h-[calc(100vh-var(--ui-header-height))]',
-      left: 'max-w-xs w-full flex items-center justify-center',
+      left: 'max-w-xs w-full',
       center: 'flex-1',
     }">
       <template #left>
         <UPageAside
           class="lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] h-full py-0 lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 rounded-xl border border-transparent hover:shadow-xl hover:border-muted duration-300 bg-muted/20 hover:bg-muted/40 flex flex-col overflow-hidden lg:pe-0">
           <div
-            class="space-y-4 flex h-full flex-col overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-6rem)] my-4 pe-4">
+            class="space-y-4 flex h-full flex-col overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] pe-4 py-4 me-1">
             <div>
               <div class="text-highlighted font-semibold">Filters</div>
               <div class="text-sm text-muted">
@@ -163,7 +176,8 @@ const paginationText = computed(() => {
             <HomeProduct :gem-id="gem.id" />
           </li>
         </ul>
-        <div v-show="data && !data.products.length" class="flex justify-center items-center h-full flex-col">
+        <div v-show="(data && !data.products.length) || status === 'error'"
+          class="flex justify-center items-center h-full flex-col">
           <p>No Results Found</p>
           <UButton @click="reset" label="Reset Filters" />
         </div>

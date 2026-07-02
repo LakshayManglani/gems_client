@@ -8,7 +8,7 @@ export function useGemFilters() {
     query: "price",
     step: 1000,
     max: 1_00_000,
-    min: 1,
+    min: 1000,
     minStepsBetweenThumbs: 4,
     fractionDigits: 2
   })
@@ -17,7 +17,7 @@ export function useGemFilters() {
     query: "weight",
     step: 0.1,
     max: 10,
-    min: 0.01,
+    min: 0.1,
     minStepsBetweenThumbs: 4,
     fractionDigits: 2
   })

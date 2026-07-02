@@ -142,7 +142,7 @@ export function useRangeFilter(options: {
   }
 
   let isInternalUpdate = false;
-  watch((): [number, number] => model.value, (next, prev) => {
+  watch((): [number, number] => [...model.value], (next, prev) => {
     if (isInternalUpdate) {
       isInternalUpdate = false;
       return;
@@ -152,6 +152,14 @@ export function useRangeFilter(options: {
     let [prevMin] = prev;
 
     let [minNext, maxNext]: [number, number] = [...next];
+
+
+    if (minNext !== normalizeRangeValue(minNext, options.min)) {
+      minNext = normalizeRangeValue(minNext, options.min)
+    }
+    if (maxNext !== normalizeRangeValue(maxNext, options.max)) {
+      maxNext = normalizeRangeValue(maxNext, options.max)
+    }
 
     // normalize next
     const isMinUpdated = prevMin !== minNext;
@@ -165,12 +173,6 @@ export function useRangeFilter(options: {
       if (maxNext - minNext < gap) {
         maxNext = normalizeRangeValue(minNext + gap, options.max);
       }
-    }
-
-    const isNextAndPrevSame = isSameRange([minNext, maxNext], prev);
-
-    if (isNextAndPrevSame) {
-      return
     }
 
     isInternalUpdate = true;
