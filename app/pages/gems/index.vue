@@ -121,17 +121,17 @@ const paginationText = computed(() => {
 </script>
 
 <template>
-  <UContainer class="min-h-[calc(100vh-var(--ui-header-height))]">
+  <UContainer class="lg:min-h-[calc(100vh-var(--ui-header-height))]">
     <UPage :ui="{
-      root: 'lg:flex lg:flex-row min-h-[calc(100vh-var(--ui-header-height))]',
+      root: 'lg:flex lg:flex-row lg:min-h-[calc(100vh-var(--ui-header-height))]',
       left: 'max-w-xs w-full',
       center: 'flex-1',
     }">
       <template #left>
         <UPageAside
-          class="lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] h-full py-0 lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 rounded-xl border border-transparent hover:shadow-xl hover:border-muted duration-300 bg-muted/20 hover:bg-muted/40 flex flex-col overflow-hidden lg:pe-0">
+          class=" lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] h-full py-0 lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 rounded-xl border border-transparent hover:shadow-xl hover:border-muted duration-300 bg-muted/20 hover:bg-muted/40 flex-col overflow-hidden lg:pe-0">
           <div
-            class="space-y-4 flex h-full flex-col overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] pe-4 py-4 me-1">
+            class="space-y-4 h-full overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] pe-4 py-4 me-1">
             <div>
               <div class="text-highlighted font-semibold">Filters</div>
               <div class="text-sm text-muted">
