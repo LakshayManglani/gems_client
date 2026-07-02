@@ -21,7 +21,7 @@ if (!primaryImage) {
 
 <template>
   <article
-    class="group flex flex-col overflow-hidden rounded-xl border border-default bg-default transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    class="flex flex-col overflow-hidden rounded-xl border border-transparent hover:border-muted bg-muted/40 hover:bg-muted transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 
     <!-- Image -->
     <NuxtLink :to="`/gems/${gem.id}`" class="relative aspect-square overflow-hidden">

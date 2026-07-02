@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import GemFilters from '~/components/filters/GemFilters.vue';
-import OptionsFilter from '~/components/filters/OptionsFilter.vue';
-import RangeFilter from '~/components/filters/RangeFilter.vue';
 import { useGemFilters } from '~/composables/filters/useGemFilters';
 
 const router = useRouter();
@@ -114,21 +112,23 @@ const paginationText = computed(() => {
 </script>
 
 <template>
-  <UContainer>
+  <UContainer class="min-h-[calc(100vh-var(--ui-header-height))]">
     <UPage :ui="{
-      root: 'lg:flex lg:flex-row',
-      left: 'max-w-xs w-full',
+      root: 'lg:flex lg:flex-row min-h-[calc(100vh-var(--ui-header-height))]',
+      left: 'max-w-xs w-full flex items-center justify-center',
       center: 'flex-1',
     }">
       <template #left>
-        <UPageAside>
-          <div class="space-y-4">
+        <UPageAside
+          class="lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] h-full py-0 lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 rounded-xl border border-transparent hover:shadow-xl hover:border-muted duration-300 bg-muted/20 hover:bg-muted/40 flex flex-col overflow-hidden lg:pe-0">
+          <div class="space-y-4 flex h-full flex-col overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-6rem)] my-4 pe-4">
             <div>
               <div class="text-highlighted font-semibold">Filters</div>
               <div class="text-sm text-muted">
                 {{ paginationText }}
               </div>
             </div>
+
             <div>
               <USeparator />
 
@@ -173,7 +173,7 @@ const paginationText = computed(() => {
 
         <UPagination v-if="data && data.pagination && data.pagination.total" v-model:page="pagination.model.value"
           :items-per-page="data.pagination.limit" :total="data.pagination.total" :sibling-count="1"
-          class="mx-auto w-min mb-8 mt-8" />
+          class="mx-auto w-min mb-8 mt-8 bg-muted/20 hover:bg-muted/40 border border-transparent hover:border-muted rounded-xl p-4 hover:shadow-xl duration-300" />
       </div>
     </UPage>
   </UContainer>
