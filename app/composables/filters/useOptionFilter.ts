@@ -29,11 +29,11 @@ export function useOptionFilter<T extends string>(options: {
       return false;
     }
 
-    bValid.forEach((value) => {
+    for (const value of bValid) {
       if (!aValid.has(value)) {
-        return false
+        return false;
       }
-    })
+    }
 
     return true
   }

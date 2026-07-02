@@ -2,7 +2,6 @@
 import GemFilters from '~/components/filters/GemFilters.vue';
 import { useGemFilters } from '~/composables/filters/useGemFilters';
 
-const router = useRouter();
 const route = useRoute();
 
 const gemsListStore = useGemsListStore();
@@ -31,18 +30,18 @@ if (import.meta.server) {
 }
 
 if (import.meta.client) {
-  callOnce(() => {
-    initialize();
-    updateRoute();
-  });
+  initialize();
+  await updateRoute();
 }
 
-const { data, pending, refresh } = useAsyncData(
+
+const { data, refresh, status } = await useAsyncData(
   'products',
   async (_, { signal }) => {
     await gemsListStore.fetchPage(query.value, false, signal);
 
     const key = gemsListStore.pageKey(query.value);
+
     return {
       products: gemsListStore.getPageProducts(key) ?? [],
       pagination: gemsListStore.getPageMeta(key)
@@ -54,23 +53,10 @@ const { data, pending, refresh } = useAsyncData(
 )
 
 // update all other query which depends upon pagination
-watch(paginationQuery, (query) => {
-  router.replace({
-    query: {
-      ...query,
-      page: 1,
-    }
-  })
-})
-
-// update page
-watch(pagination.query, (query) => {
-  router.push({
-    query: {
-      ...route.query,
-      ...query,
-    }
-  })
+watch(paginationQuery, () => {
+  if (pagination.model.value !== 1) {
+    pagination.reset();
+  }
 })
 
 // initialize state if route.query changes
@@ -90,7 +76,18 @@ watch(query, () => {
 // call api if query is not changed after some time-frame
 watchDebounced(
   query,
-  refresh,
+  async () => {
+    const currentQuery = { ...query.value };
+
+    await refresh()
+
+    if (status.value !== "success") return
+
+    await navigateTo({
+      query: currentQuery
+    })
+
+  },
   {
     debounce: 200,
   }
@@ -108,7 +105,6 @@ const paginationText = computed(() => {
 
   return `${start}-${end} of ${pagination.total} results`;
 });
-
 </script>
 
 <template>
@@ -121,7 +117,8 @@ const paginationText = computed(() => {
       <template #left>
         <UPageAside
           class="lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] h-full py-0 lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 rounded-xl border border-transparent hover:shadow-xl hover:border-muted duration-300 bg-muted/20 hover:bg-muted/40 flex flex-col overflow-hidden lg:pe-0">
-          <div class="space-y-4 flex h-full flex-col overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-6rem)] my-4 pe-4">
+          <div
+            class="space-y-4 flex h-full flex-col overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-6rem)] my-4 pe-4">
             <div>
               <div class="text-highlighted font-semibold">Filters</div>
               <div class="text-sm text-muted">

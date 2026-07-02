@@ -4,8 +4,6 @@ import { useOptionFilter } from "./useOptionFilter";
 import { usePaginationFilter } from "./usePaginationFilter";
 
 export function useGemFilters() {
-  const router = useRouter();
-
   const price = useRangeFilter({
     query: "price",
     step: 1000,
@@ -83,9 +81,10 @@ export function useGemFilters() {
     })
   }
 
-  function updateRoute() {
-    router.replace({
+  async function updateRoute() {
+    await navigateTo({
       query: query.value,
+      replace: true,
     })
   }
 
