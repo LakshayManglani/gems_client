@@ -166,22 +166,45 @@ const paginationText = computed(() => {
             <div class="text-sm text-muted">
               {{ paginationText }}
             </div>
-
-            <USlideover title="Filters" :description="paginationText">
+            <UDrawer handle-only dismissible inset>
               <UButton label="Filters" variant="subtle" color="neutral" class="lg:hidden" />
 
-              <template #body>
-                <div class="pb-3.5 flex justify-end">
-                  <UButton label="Clear Filters" icon="i-lucide-rotate-ccw" color="neutral" variant="outline"
-                    @click="reset" />
+              <template #content>
+                <div class="max-h-[50vh] overflow-y-auto px-4 py-4">
+                  <div class="pb-3.5">
+                    <div class="flex items-center justify-between">
+                      <div class="text-highlighted font-semibold">Filters</div>
+                      <UButton label="Clear" icon="i-lucide-rotate-ccw" variant="ghost" color="neutral" size="sm"
+                        @click="reset" />
+                    </div>
+
+                    <div class="text-sm text-muted">
+                      {{ paginationText }}
+                    </div>
+                  </div>
+
+                  <USeparator />
+
+                  <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems"
+                    :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" :sortBy />
                 </div>
-
-                <USeparator />
-
-                <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems"
-                  :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" :sortBy />
               </template>
-            </USlideover>
+            </UDrawer>
+            <!-- <USlideover title="Filters" :description="paginationText"> -->
+            <!--   <UButton label="Filters" variant="subtle" color="neutral" class="lg:hidden" /> -->
+            <!---->
+            <!--   <template #body> -->
+            <!--     <div class="pb-3.5 flex justify-end"> -->
+            <!--       <UButton label="Clear Filters" icon="i-lucide-rotate-ccw" color="neutral" variant="outline" -->
+            <!--         @click="reset" /> -->
+            <!--     </div> -->
+            <!---->
+            <!--     <USeparator /> -->
+            <!---->
+            <!--     <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems" -->
+            <!--       :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" :sortBy /> -->
+            <!--   </template> -->
+            <!-- </USlideover> -->
           </div>
         </div>
 
