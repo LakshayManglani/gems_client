@@ -129,7 +129,7 @@ const paginationText = computed(() => {
     }">
       <template #left>
         <UPageAside
-          class=" lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] h-full py-0 lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 rounded-xl border border-transparent hover:shadow-xl hover:border-muted duration-300 bg-muted/20 hover:bg-muted/40 flex-col overflow-hidden lg:pe-0">
+          class="lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] h-full py-0 lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 rounded-xl border border-transparent hover:shadow-xl hover:border-muted duration-300 bg-muted/20 hover:bg-muted/40 flex-col overflow-hidden lg:pe-0">
           <div
             class="space-y-4 h-full overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] pe-4 py-4 me-1">
             <div>
@@ -149,7 +149,7 @@ const paginationText = computed(() => {
         </UPageAside>
       </template>
 
-      <div class="mt-8 relative h-full">
+      <div class="pt-8 relative flex flex-col h-full">
         <div class="relative">
           <div class="lg:hidden h-16" />
 
@@ -182,9 +182,11 @@ const paginationText = computed(() => {
           <UButton @click="reset" label="Reset Filters" />
         </div>
 
-        <UPagination v-if="data && data.pagination && data.pagination.total" v-model:page="pagination.model.value"
-          :items-per-page="data.pagination.limit" :total="data.pagination.total" :sibling-count="1"
-          class="mx-auto w-min mb-8 mt-8 bg-muted/20 hover:bg-muted/40 border border-transparent hover:border-muted rounded-xl p-4 hover:shadow-xl duration-300" />
+        <div class="flex flex-1 justify-end flex-col">
+          <UPagination v-if="data && data.pagination && data.pagination.total" v-model:page="pagination.model.value"
+            :items-per-page="data.pagination.limit" :total="data.pagination.total" :sibling-count="1"
+            class="mx-auto w-min mb-8 mt-8 bg-muted/20 hover:bg-muted/40 border border-transparent hover:border-muted rounded-xl p-4 hover:shadow-xl duration-300" />
+        </div>
       </div>
     </UPage>
   </UContainer>

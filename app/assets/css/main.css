@@ -1,12 +1,20 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
-:root {
-  --ui-primary: black;
-}
+/* :root { */
+/*   --ui-primary: black; */
+/* } */
 
-.dark {
-  --ui-primary: white;
+/* .dark { */
+/*   --ui-primary: white; */
+/* } */
+
+.light {
+  --ui-bg: var(--ui-color-neutral-50);
+  --ui-bg-muted: var(--ui-color-neutral-100);
+  --ui-bg-elevated: white;
+  --ui-bg-accented: var(--ui-color-neutral-200);
+  --ui-bg-inverted: black;
 }
 
 /* Chrome, Edge, Safari */
