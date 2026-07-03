@@ -8,6 +8,7 @@ const gemsListStore = useGemsListStore();
 
 const gemFilters = useGemFilters();
 const {
+  sortBy,
   price,
   weight,
   variety,
@@ -132,8 +133,14 @@ const paginationText = computed(() => {
           class="lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] h-full py-0 lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 rounded-xl border border-transparent hover:shadow-xl hover:border-muted duration-300 bg-muted/20 hover:bg-muted/40 flex-col overflow-hidden lg:pe-0">
           <div
             class="space-y-4 h-full overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] pe-4 py-4 me-1">
+
             <div>
-              <div class="text-highlighted font-semibold">Filters</div>
+              <div class="flex items-center justify-between">
+                <div class="text-highlighted font-semibold">Filters</div>
+                <UButton label="Clear" icon="i-lucide-rotate-ccw" variant="ghost" color="neutral" size="sm"
+                  @click="reset" />
+              </div>
+
               <div class="text-sm text-muted">
                 {{ paginationText }}
               </div>
@@ -143,7 +150,7 @@ const paginationText = computed(() => {
               <USeparator />
 
               <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems"
-                :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" />
+                :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" :sortBy />
             </div>
           </div>
         </UPageAside>
@@ -164,8 +171,15 @@ const paginationText = computed(() => {
               <UButton label="Filters" variant="subtle" color="neutral" class="lg:hidden" />
 
               <template #body>
+                <div class="pb-3.5 flex justify-end">
+                  <UButton label="Clear Filters" icon="i-lucide-rotate-ccw" color="neutral" variant="outline"
+                    @click="reset" />
+                </div>
+
+                <USeparator />
+
                 <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems"
-                  :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" />
+                  :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" :sortBy />
               </template>
             </USlideover>
           </div>
@@ -179,7 +193,7 @@ const paginationText = computed(() => {
         <div v-show="(data && !data.products.length) || status === 'error'"
           class="flex justify-center items-center h-full flex-col">
           <p>No Results Found</p>
-          <UButton @click="reset" label="Reset Filters" />
+          <UButton @click="reset" label="Clear Filters" />
         </div>
 
         <div class="flex flex-1 justify-end flex-col">

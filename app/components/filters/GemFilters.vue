@@ -4,6 +4,7 @@ import type { useOptionFilter } from '~/composables/filters/useOptionFilter';
 import type { useRangeFilter } from '~/composables/filters/useRangeFilter';
 import RangeFilter from './RangeFilter.vue';
 import OptionsFilter from './OptionsFilter.vue';
+import type { useSortFilter } from '~/composables/filters/useSortFilter';
 
 const props = defineProps<{
   price: ReturnType<typeof useRangeFilter>
@@ -17,11 +18,17 @@ const props = defineProps<{
 
   clarity: ReturnType<typeof useOptionFilter>
   clarityItems: CheckboxGroupItem[];
+
+  sortBy: ReturnType<typeof useSortFilter>;
 }>()
 
 const active = ['0', '1']
 
 const items: AccordionItem[] = [
+  {
+    label: 'Sort By',
+    slot: 'sort',
+  },
   {
     label: 'Price',
     slot: 'price',
@@ -47,6 +54,12 @@ const items: AccordionItem[] = [
 
 <template>
   <UAccordion :items="items" type="multiple" :default-value="active">
+
+    <template #sort>
+      <UFormField class="pb-3.5">
+        <USelect v-model="sortBy.model.value" value-key="id" :items="sortBy.items" class="w-full" />
+      </UFormField>
+    </template>
 
     <template #price>
       <RangeFilter v-bind="price" icon="i-lucide-indian-rupee" />

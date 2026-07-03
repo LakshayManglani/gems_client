@@ -2,8 +2,10 @@ import gemsSchema from "~/schema/gems";
 import { useRangeFilter } from "./useRangeFilter";
 import { useOptionFilter } from "./useOptionFilter";
 import { usePaginationFilter } from "./usePaginationFilter";
+import { useSortFilter } from "./useSortFilter";
 
 export function useGemFilters() {
+
   const price = useRangeFilter({
     query: "price",
     step: 1000,
@@ -21,6 +23,34 @@ export function useGemFilters() {
     minStepsBetweenThumbs: 4,
     fractionDigits: 2
   })
+
+
+  const sortByItems = [
+    { label: "Newest", id: "newest", order: "desc", by: "created_at" },
+    {
+      label: 'Price: Low to High',
+      id: 'price_low_to_high',
+      order: 'asc',
+      by: 'price',
+    },
+    {
+      label: 'Price: High to Low',
+      id: 'price_high_to_low',
+      order: 'desc',
+      by: "price",
+    },
+    { label: "Weight: Light to Heavy", id: "weight_light_to_heavy", order: "asc", by: "weight" },
+    { label: "Weight: Heavy to Light", id: "weight_heavy_to_light", order: "desc", by: "weight" },
+  ];
+
+  const sortBy = useSortFilter({
+    query: "sort_by",
+    orderQuery: "sort_order",
+    items: sortByItems,
+    defaultId: "newest",
+    defaultOrder: 'desc',
+    defaultBy: "created_at",
+  });
 
   const varietyItems = [...gemsSchema.variety.map((variety) => {
     return {
@@ -63,7 +93,7 @@ export function useGemFilters() {
     query: "page"
   });
 
-  const paginationFilter = [price, weight, variety, shape, clarity];
+  const paginationFilter = [price, weight, variety, shape, clarity, sortBy];
 
   const filters = [...paginationFilter, pagination];
 
@@ -97,6 +127,8 @@ export function useGemFilters() {
   return {
     price,
     weight,
+    sortBy,
+    sortByItems,
     variety,
     varietyItems,
     shape,

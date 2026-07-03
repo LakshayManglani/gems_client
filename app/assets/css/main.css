@@ -10,7 +10,7 @@
 /* } */
 
 .light {
-  --ui-bg: var(--ui-color-neutral-50);
+  --ui-bg: #F0F0F0;
   --ui-bg-muted: var(--ui-color-neutral-100);
   --ui-bg-elevated: white;
   --ui-bg-accented: var(--ui-color-neutral-200);
