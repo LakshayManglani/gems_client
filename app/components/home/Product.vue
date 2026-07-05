@@ -72,7 +72,11 @@ function stopVideo() {
   }
 }
 
-const canHover = window.matchMedia('(hover: hover)').matches
+let canHover = false;
+
+if (import.meta.client) {
+  canHover = window.matchMedia('(hover: hover)').matches
+}
 
 function onMouseEnter() {
   if (!canHover || !video) return
