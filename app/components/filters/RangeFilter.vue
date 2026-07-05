@@ -24,7 +24,7 @@ const props = defineProps<{
       </UFormField>
     </div>
 
-    <div class="px-1">
+    <div class="px-1 pt-2 pb-2">
       <USlider v-model="model.value" :min :max :step :minStepsBetweenThumbs />
     </div>
   </UFormField>

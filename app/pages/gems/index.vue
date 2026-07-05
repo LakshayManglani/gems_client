@@ -119,6 +119,8 @@ const paginationText = computed(() => {
 
   return `${start}-${end} of ${pagination.total} results`;
 });
+
+const open = ref(false)
 </script>
 
 <template>
@@ -157,57 +159,42 @@ const paginationText = computed(() => {
       </template>
 
       <div class="pt-8 relative flex flex-col h-full">
-        <div class="relative">
-          <div class="lg:hidden h-16" />
+        <!-- Mobile Filters -->
+        <UDrawer v-model:open="open" :handle="false" handle-only dismissible inset>
+          <UButton icon="i-lucide-filter" color="neutral" variant="subtle" size="xl" square
+            class="fixed bottom-20 right-4 z-50 rounded-full shadow-lg lg:hidden" />
 
-          <div
-            class="fixed top-16 inset-x-0 z-50 flex gap-2 flex-wrap justify-between items-center p-4 bg-default lg:hidden border-b border-default">
-
-            <div class="text-sm text-muted">
-              {{ paginationText }}
-            </div>
-            <UDrawer handle-only dismissible inset>
-              <UButton label="Filters" variant="subtle" color="neutral" class="lg:hidden" />
-
-              <template #content>
-                <div class="max-h-[50vh] overflow-y-auto px-4 py-4">
-                  <div class="pb-3.5">
-                    <div class="flex items-center justify-between">
-                      <div class="text-highlighted font-semibold">Filters</div>
-                      <UButton label="Clear" icon="i-lucide-rotate-ccw" variant="ghost" color="neutral" size="sm"
-                        @click="reset" />
-                    </div>
-
-                    <div class="text-sm text-muted">
-                      {{ paginationText }}
-                    </div>
-                  </div>
-
-                  <USeparator />
-
-                  <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems"
-                    :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" :sortBy />
+          <template #body>
+            <div class="max-h-[50vh] overflow-y-auto px-4">
+              <div class="pb-3.5">
+                <div class="flex items-center justify-between">
+                  <div class="text-highlighted font-semibold">Filters</div>
+                  <UButton label="Clear Filters" icon="i-lucide-rotate-ccw" variant="ghost" color="neutral" size="sm"
+                    @click="reset" />
                 </div>
-              </template>
-            </UDrawer>
-            <!-- <USlideover title="Filters" :description="paginationText"> -->
-            <!--   <UButton label="Filters" variant="subtle" color="neutral" class="lg:hidden" /> -->
-            <!---->
-            <!--   <template #body> -->
-            <!--     <div class="pb-3.5 flex justify-end"> -->
-            <!--       <UButton label="Clear Filters" icon="i-lucide-rotate-ccw" color="neutral" variant="outline" -->
-            <!--         @click="reset" /> -->
-            <!--     </div> -->
-            <!---->
-            <!--     <USeparator /> -->
-            <!---->
-            <!--     <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems" -->
-            <!--       :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" :sortBy /> -->
-            <!--   </template> -->
-            <!-- </USlideover> -->
-          </div>
-        </div>
 
+                <div class="text-sm text-muted">
+                  {{ paginationText }}
+                </div>
+              </div>
+
+              <USeparator />
+
+              <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems"
+                :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" :sortBy />
+            </div>
+          </template>
+
+          <template #footer>
+            <USeparator />
+            <div class="flex justify-between mt-2 items-center">
+              <h2 class="text-highlighted font-semibold">Filters</h2>
+              <UButton icon="i-lucide-x" color="neutral" variant="ghost" square @click="open = false" />
+            </div>
+          </template>
+        </UDrawer>
+
+        <!-- Product List -->
         <ul v-show="data && data.products.length" class="grid grid-cols-[repeat(auto-fill,minmax(256px,1fr))] gap-8">
           <li v-for="gem in data?.products" :key="gem.id">
             <HomeProduct :gem-id="gem.id" />
@@ -219,6 +206,7 @@ const paginationText = computed(() => {
           <UButton @click="reset" label="Clear Filters" />
         </div>
 
+        <!-- Pagination -->
         <div class="flex flex-1 justify-end flex-col">
           <UPagination v-if="data && data.pagination && data.pagination.total" v-model:page="pagination.model.value"
             :items-per-page="data.pagination.limit" :total="data.pagination.total" :sibling-count="1"

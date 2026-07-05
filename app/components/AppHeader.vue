@@ -3,29 +3,24 @@ import type { NavigationMenuItem } from '@nuxt/ui';
 
 const items = ref<NavigationMenuItem[]>([
   {
-    label: 'Home',
-    to: '/',
-    icon: 'i-lucide-home',
-  },
-  {
     label: 'Gems',
     to: '/gems',
     icon: 'i-lucide-gem',
   },
   {
-    label: 'About',
-    to: '/about',
-    icon: 'i-lucide-info',
-  },
-  {
-    label: 'Sell With Us',
-    to: '/sell-with-us',
+    label: 'Sell',
+    to: '/sell',
     icon: 'i-lucide-store',
   },
   {
     label: 'Contact',
     to: '/contact',
     icon: 'i-lucide-phone',
+  },
+  {
+    label: 'About',
+    to: '/about',
+    icon: 'i-lucide-info',
   },
 ]);
 
@@ -56,11 +51,11 @@ const mobileItems = ref<NavigationMenuItem[]>([
 </script>
 
 <template>
-  <div class="sticky top-0 left-0 right-0 z-50 bg-default">
-    <UHeader toggle-side="left" :title="platform.name" :ui="{
+
+  <div class="sticky top-0 left-0 right-0 z-50">
+    <UHeader :toggle="false" :title="platform.name" :ui="{
       left: 'flex-1',
-      title: 'mx-auto lg:mx-0 w-max items-center pl-11 lg:pl-0',
-    }">
+    }" class="mx-auto bg-default left-0 right-0 border-b">
       <UNavigationMenu :items="items" />
 
       <template #right>

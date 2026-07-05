@@ -53,7 +53,9 @@ const items: AccordionItem[] = [
 </script>
 
 <template>
-  <UAccordion :items="items" type="multiple" :default-value="active">
+  <UAccordion :items="items" type="multiple" :default-value="active" :ui="{
+    content: 'px-4'
+  }">
 
     <template #sort>
       <UFormField class="pb-3.5">

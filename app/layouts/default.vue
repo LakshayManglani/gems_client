@@ -1,9 +1,10 @@
 <template>
   <div>
     <AppHeader />
-    <UMain>
+    <UMain class="flex flex-col">
       <slot />
     </UMain>
     <AppFooter />
+    <AppNavbar />
   </div>
 </template>

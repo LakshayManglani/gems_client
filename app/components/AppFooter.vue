@@ -4,24 +4,20 @@ const columns = [
     label: 'Company',
     children: [
       {
-        label: 'Home',
-        to: '/',
-      },
-      {
         label: 'Gems',
         to: '/gems',
       },
       {
-        label: 'About',
-        to: '/about',
-      },
-      {
-        label: 'Sell With Us',
-        to: '/sell-with-us',
+        label: 'Sell',
+        to: '/sell',
       },
       {
         label: 'Contact',
         to: '/contact',
+      },
+      {
+        label: 'About',
+        to: '/about',
       },
     ],
   },
