@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+    '@nuxt/image',
   ],
   css: ['./app/assets/css/main.css'],
   vite: {
@@ -39,4 +40,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiBase: "http://localhost:8080",
   },
+
+  image: {
+    quality: 100,
+    cloudinary: {
+      baseURL: 'https://res.cloudinary.com/dxnuagdft/image/upload/'
+    }
+  }
 });
