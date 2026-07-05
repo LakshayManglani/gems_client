@@ -29,6 +29,7 @@
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.116",
     "@types/node": "^25.9.1",
+    "@vite-pwa/nuxt": "^1.1.1",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "14.3.0",
     "prettier": "3.6.2",

@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image',
+    '@vite-pwa/nuxt'
   ],
   css: ['./app/assets/css/main.css'],
   vite: {
@@ -46,5 +47,36 @@ export default defineNuxtConfig({
     cloudinary: {
       baseURL: 'https://res.cloudinary.com/dxnuagdft/image/upload/'
     }
-  }
+  },
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'Gems',
+      short_name: 'Gems',
+      description: 'Curated natural & certified gemstones.',
+      theme_color: '#000000',
+      background_color: '#000000',
+      display: 'standalone',
+      icons: [
+        {
+          src: '/logo-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: '/logo-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ],
+    },
+    workbox: {
+      cleanupOutdatedCaches: true,
+      clientsClaim: true
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module'
+    }
+  },
 });
