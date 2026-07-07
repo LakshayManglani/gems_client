@@ -6,6 +6,14 @@
 .cache
 dist
 
+
+# Generated PWA assets
+/public/apple-splash-*.png
+/public/apple-touch-icon-*.png
+/public/favicon.ico
+/public/maskable-icon-*.png
+/public/pwa-*.png
+
 # Node dependencies
 node_modules
 
