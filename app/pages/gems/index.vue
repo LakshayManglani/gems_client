@@ -26,19 +26,18 @@ const {
 } = gemFilters;
 
 
+const open = ref(false)
+
 if (import.meta.server) {
   initialize()
 }
 
 if (import.meta.client) {
   initialize();
-  callOnce(async () => {
-    await updateRoute();
-  })
+  await updateRoute();
 }
 
 const { data, refresh, status } = await useAsyncData(
-  'products',
   async (_, { signal }) => {
     await gemsListStore.fetchPage(query.value, false, signal);
 
@@ -120,7 +119,6 @@ const paginationText = computed(() => {
   return `${start}-${end} of ${pagination.total} results`;
 });
 
-const open = ref(false)
 </script>
 
 <template>
@@ -132,10 +130,8 @@ const open = ref(false)
     }">
       <template #left>
         <UPageAside
-          class="lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] h-full py-0 lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 rounded-xl border border-transparent hover:shadow-xl hover:border-muted duration-300 bg-muted/20 hover:bg-muted/40 flex-col overflow-hidden lg:pe-0">
-          <div
-            class="space-y-4 h-full overflow-y-auto lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] pe-4 py-4 me-1">
-
+          class="lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)]  lg:top-[calc(var(--ui-header-height)+2rem)] mb-8 flex-col overflow-hidden lg:pe-0 lg:ps-0 h-full py-0 px-0 w-full">
+          <AppCard class="lg:max-h-[calc(100vh-var(--ui-header-height)-4rem)] overflow-y-auto space-y-4 h-full p-4">
             <div>
               <div class="flex items-center justify-between">
                 <div class="text-highlighted font-semibold">Filters</div>
@@ -154,7 +150,7 @@ const open = ref(false)
               <GemFilters :price="price" :weight="weight" :variety="variety" :variety-items="varietyItems"
                 :shape="shape" :shape-items="shapeItems" :clarity="clarity" :clarity-items="clarityItems" :sortBy />
             </div>
-          </div>
+          </AppCard>
         </UPageAside>
       </template>
 
@@ -208,9 +204,10 @@ const open = ref(false)
 
         <!-- Pagination -->
         <div class="flex flex-1 justify-end flex-col">
-          <UPagination v-if="data && data.pagination && data.pagination.total" v-model:page="pagination.model.value"
-            :items-per-page="data.pagination.limit" :total="data.pagination.total" :sibling-count="1"
-            class="mx-auto w-min mb-8 mt-8 bg-muted/20 hover:bg-muted/40 border border-transparent hover:border-muted rounded-xl p-4 hover:shadow-xl duration-300" />
+          <AppCard class="mx-auto my-8 w-min p-4">
+            <UPagination v-if="data && data.pagination && data.pagination.total" v-model:page="pagination.model.value"
+              :items-per-page="data.pagination.limit" :total="data.pagination.total" :sibling-count="1" />
+          </AppCard>
         </div>
       </div>
     </UPage>

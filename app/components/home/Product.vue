@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import lowerCase from '~/utils/lowerCase';
 
 const { gemId } = defineProps<{
   gemId: string;
@@ -6,19 +7,11 @@ const { gemId } = defineProps<{
 
 const gemsStore = useGemsStore();
 
-const gem = gemsStore.getById(gemId);
+const gem = computed(() => gemsStore.getById(gemId));
 
-if (!gem) {
-  throw new Error('Gem not found')
-}
+const primaryImage = computed(() => gem.value?.assets.find((asset) => asset.type === 'image'));
 
-const primaryImage = gem.assets.find((asset) => asset.type === 'image');
-
-if (!primaryImage) {
-  throw new Error('Image not found')
-}
-
-const price = computed(() => formatPrice(gem.price));
+const price = computed(() => formatPrice(gem.value?.price ?? 0));
 
 const formatPrice = (value: number) =>
   new Intl.NumberFormat('en-IN', {
@@ -29,7 +22,7 @@ const formatPrice = (value: number) =>
   }).format(value)
 
 
-const video = gem.assets.find(a => a.type === 'video')
+const video = computed(() => gem.value?.assets.find(a => a.type === 'video'))
 
 const showVideo = ref(false)
 
@@ -56,7 +49,6 @@ function startVideo() {
   nextTick(() => {
     if (videoRef) {
       videoRef.play().catch(() => { })
-      console.log("play")
     }
   })
 }
@@ -68,7 +60,6 @@ function stopVideo() {
   if (videoRef) {
     videoRef.pause()
     videoRef.currentTime = 0
-    console.log("stop")
   }
 }
 
@@ -82,7 +73,6 @@ function onMouseEnter() {
   if (!canHover || !video) return
 
   hoverTimer = setTimeout(() => {
-    console.log("hello")
     startVideo()
   }, 750)
 }
@@ -131,55 +121,56 @@ function setVideoRef(el: Element | ComponentPublicInstance | null) {
 </script>
 
 <template>
-  <article
-    class="flex flex-col overflow-hidden rounded-xl border border-transparent hover:border-muted bg-muted/40 hover:bg-muted transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-    @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+  <AppCard class="hover:-translate-y-1" v-if="gem">
+    <article class="flex flex-col" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
 
-    <!-- Image -->
-    <NuxtLink :to="`/gems/${gem.id}`" class="relative aspect-square overflow-hidden">
-      <div ref="mediaViewportRef" class="aspect-square">
-        <NuxtImg v-show="!showVideo" provider="cloudinary" :src="primaryImage.image?.public_id" :modifiers="{
-          transformation: 'product-card'
-        }" class="aspect-square object-cover w-full rounded-md" />
-        <!-- Video -->
-        <video :ref="(el) => setVideoRef(el)" :src="video?.video?.url" v-show="showVideo"
-          class="h-full w-full object-cover" muted loop playsinline preload="none" />
-      </div>
+      <!-- Image -->
+      <NuxtLink :to="`/gems/${gem.id}`" class="relative aspect-square overflow-hidden">
+        <div ref="mediaViewportRef" class="aspect-square">
+          <NuxtImg v-show="!showVideo" provider="cloudinary" :src="primaryImage?.image?.public_id" :modifiers="{
+            transformation: 'product-card'
+          }" class="aspect-square object-cover w-full rounded-md" />
+          <!-- Video -->
+          <video :ref="(el) => setVideoRef(el)" :src="video?.video?.url" v-show="showVideo"
+            class="h-full w-full object-cover" muted loop playsinline preload="none" />
+        </div>
 
-      <UButton v-if="video" class="absolute bottom-2 right-2" :icon="showVideo ? 'i-lucide-image' : 'i-lucide-play'"
-        color="neutral" variant="solid" @click.prevent="toggleVideo" size="sm">
-        {{ showVideo ? 'Image' : 'Video' }}
-      </UButton>
+        <UButton v-if="video" class="absolute bottom-2 right-2" :icon="showVideo ? 'i-lucide-image' : 'i-lucide-play'"
+          color="neutral" variant="solid" @click.prevent="toggleVideo" size="sm">
+          {{ showVideo ? 'Image' : 'Video' }}
+        </UButton>
 
 
-      <UBadge color="neutral" variant="solid" class="absolute bottom-2 left-2 bg-inverted/50 backdrop-blur">
-        <UIcon name="i-lucide-gem" />
-        <span>{{ lowerCase(gem.variety) }}</span>
-      </UBadge>
-    </NuxtLink>
-
-    <!-- Content -->
-    <div class="p-4">
-      <NuxtLink :to="`/gems/${gem.id}`" class="block">
-        <p class="text-2xl text-highlighted font-semibold leading-tight">
-          {{ price }}
-        </p>
-        <p class="text-sm text-muted">per carat</p>
+        <UBadge color="neutral" variant="solid" class="absolute bottom-2 left-2 bg-inverted/50 backdrop-blur">
+          <UIcon name="i-lucide-gem" />
+          <span>{{ lowerCase(gem.variety) }}</span>
+        </UBadge>
       </NuxtLink>
 
-      <USeparator class="my-3" />
+      <!-- Content -->
+      <div class="p-4">
+        <NuxtLink :to="`/gems/${gem.id}`" class="block">
+          <p class="text-2xl text-highlighted font-semibold leading-tight">
+            {{ price }}
+          </p>
+          <p class="text-sm text-muted">per carat</p>
+        </NuxtLink>
 
-      <div class="flex gap-1 text-sm text-muted flex-wrap justify-between items-center ">
-        <div class="flex items-center justify-center gap-2">
-          <UIcon name="i-lucide-weight" />
-          <span class="text-highlighted">{{ gem.weight }} ct</span>
-        </div>
+        <USeparator class="my-3" />
 
-        <div class="flex items-center justify-center gap-2">
-          <UIcon name="i-lucide-shapes" />
-          <span class="text-highlighted">{{ lowerCase(gem.shape) }} </span>
+        <div class="flex gap-1 text-sm text-muted flex-wrap justify-between items-center ">
+          <div class="flex items-center justify-center gap-2">
+            <UIcon name="i-lucide-weight" />
+            <span class="text-highlighted">{{ gem.weight }} ct</span>
+          </div>
+
+          <div class="flex items-center justify-center gap-2">
+            <UIcon name="i-lucide-shapes" />
+            <span class="text-highlighted">{{ lowerCase(gem.shape) }} </span>
+          </div>
         </div>
       </div>
-    </div>
-  </article>
+    </article>
+
+  </AppCard>
 </template>

@@ -90,12 +90,14 @@ export default defineNuxtConfig({
     },
     workbox: {
       cleanupOutdatedCaches: true,
-      clientsClaim: true
+      clientsClaim: true,
+      disableDevLogs: true,
     },
     devOptions: {
       enabled: true,
       type: 'module',
       navigateFallback: '/',
+      suppressWarnings: true
     }
   },
 });

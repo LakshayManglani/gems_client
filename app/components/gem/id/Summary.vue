@@ -32,8 +32,7 @@ const trust = [
 </script>
 
 <template>
-  <div
-    class="rounded-xl border border-transparent hover:border-muted bg-muted/20 hover:bg-muted/40 duration-300 hover:shadow-xl p-6 flex flex-col gap-4">
+  <AppCard class="p-4 flex flex-col gap-4">
     <div>
       <p class="flex items-center gap-1.5 text-sm text-muted mb-1">
         <UIcon name="i-lucide-gem" class="size-4" />
@@ -62,5 +61,5 @@ const trust = [
         <span class="text-xs text-muted leading-tight">{{ item.label }}</span>
       </div>
     </div>
-  </div>
+  </AppCard>
 </template>

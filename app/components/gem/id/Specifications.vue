@@ -41,8 +41,7 @@ const specs = computed(() => [
 
 <template>
 
-  <div
-    class="rounded-xl border border-transparent hover:border-muted bg-muted/20 hover:bg-muted/40 duration-300 hover:shadow-xl p-4">
+  <AppCard class="p-4">
     <p class="text-highlighted font-semibold mb-1">Specifications</p>
     <div class="divide-y divide-default">
       <div v-for="spec in specs" :key="spec.label" class="grid grid-cols-2 gap-4 py-3">
@@ -55,6 +54,6 @@ const specs = computed(() => [
         </div>
       </div>
     </div>
-  </div>
+  </AppCard>
 
 </template>

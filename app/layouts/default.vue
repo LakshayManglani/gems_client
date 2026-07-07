@@ -1,10 +1,14 @@
 <template>
-  <div>
+  <AppContext>
+    <NuxtPwaManifest />
+    <NuxtRouteAnnouncer />
+    <NuxtLoadingIndicator />
+
     <AppHeader />
     <UMain class="flex flex-col">
       <slot />
     </UMain>
     <AppFooter />
     <AppNavbar />
-  </div>
+  </AppContext>
 </template>
