@@ -9,6 +9,9 @@ const gemsStore = useGemsStore();
 
 const gem = computed(() => gemsStore.getById(gemId));
 
+const imageLoading = ref(true);
+const videoLoading = ref(true);
+
 const primaryImage = computed(() => gem.value?.assets.find((asset) => asset.type === 'image'));
 
 const price = computed(() => formatPrice(gem.value?.price ?? 0));
@@ -70,7 +73,7 @@ if (import.meta.client) {
 }
 
 function onMouseEnter() {
-  if (!canHover || !video) return
+  if (!canHover || !video.value) return
 
   hoverTimer = setTimeout(() => {
     startVideo()
@@ -78,7 +81,7 @@ function onMouseEnter() {
 }
 
 function onMouseLeave() {
-  if (!canHover || !video) return
+  if (!canHover || !video.value) return
 
   if (hoverTimer) {
     clearTimeout(hoverTimer)
@@ -118,6 +121,7 @@ onBeforeUnmount(() => {
 function setVideoRef(el: Element | ComponentPublicInstance | null) {
   videoRef = (el as HTMLVideoElement) ?? null
 }
+
 </script>
 
 <template>
@@ -126,13 +130,27 @@ function setVideoRef(el: Element | ComponentPublicInstance | null) {
 
       <!-- Image -->
       <NuxtLink :to="`/gems/${gem.id}`" class="relative aspect-square overflow-hidden">
-        <div ref="mediaViewportRef" class="aspect-square">
-          <NuxtImg v-show="!showVideo" provider="cloudinary" :src="primaryImage?.image?.public_id" :modifiers="{
+        <div ref="mediaViewportRef" class="aspect-square rounded-md overflow-hidden">
+          <!-- Image -->
+          <div class="absolute inset-0 transition-all duration-300" :class="{
+            'opacity-0': !(imageLoading || videoLoading)
+          }">
+            <USkeleton class="absolute inset-0 transition-opacity duration-300" />
+          </div>
+
+          <NuxtImg provider="cloudinary" :src="primaryImage?.image?.public_id" :modifiers="{
             transformation: 'product-card'
-          }" class="aspect-square object-cover w-full rounded-md" />
-          <!-- Video -->
-          <video :ref="(el) => setVideoRef(el)" :src="video?.video?.url" v-show="showVideo"
-            class="h-full w-full object-cover" muted loop playsinline preload="none" />
+          }" class="absolute aspect-square object-cover w-full transition-all duration-300" :class="{
+            '-translate-x-full': showVideo,
+            'opacity-0': imageLoading
+          }" @load="imageLoading = false" />
+
+          <video :ref="(el) => setVideoRef(el)" :src="video?.video?.url"
+            class="absolute inset-0 h-full w-full object-cover duration-300 transition-all" muted loop playsinline
+            preload="none" :class="{
+              'translate-x-full': !showVideo,
+              'opacity-0': videoLoading
+            }" @loadeddata="videoLoading = false" />
         </div>
 
         <UButton v-if="video" class="absolute bottom-2 right-2" :icon="showVideo ? 'i-lucide-image' : 'i-lucide-play'"
