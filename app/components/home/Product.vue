@@ -58,12 +58,12 @@ function startVideo() {
 
 
 function stopVideo() {
-  showVideo.value = false
-
   if (videoRef) {
     videoRef.pause()
     videoRef.currentTime = 0
   }
+
+  showVideo.value = false
 }
 
 let canHover = false;
@@ -91,27 +91,27 @@ function onMouseLeave() {
   stopVideo()
 }
 
-onMounted(() => {
-  observer = new IntersectionObserver(
-    ([entry]) => {
-      if (!entry?.isIntersecting) {
-        if (showVideo.value) {
-          stopVideo()
-        }
-      }
-    },
-    {
-      threshold: 0.70
-    }
-  )
-
-  if (mediaViewportRef.value) {
-    observer.observe(mediaViewportRef.value)
-  }
-})
+// onMounted(() => {
+//   observer = new IntersectionObserver(
+//     ([entry]) => {
+//       if (!entry?.isIntersecting) {
+//         if (showVideo.value) {
+//           stopVideo()
+//         }
+//       }
+//     },
+//     {
+//       threshold: 0.70
+//     }
+//   )
+//
+//   if (mediaViewportRef.value) {
+//     observer.observe(mediaViewportRef.value)
+//   }
+// })
 
 onBeforeUnmount(() => {
-  observer?.disconnect()
+  // observer?.disconnect()
 
   if (hoverTimer) {
     clearTimeout(hoverTimer)
@@ -145,7 +145,11 @@ const posterUrl = computed(() => {
             <USkeleton class="absolute inset-0 transition-opacity duration-300" />
           </div>
 
-          <video :ref="(el) => setVideoRef(el)" :poster="posterUrl" :src="`${video?.video?.url}#t=0.001`"
+          <img v-show="!showVideo" :src="posterUrl" :alt="gem?.variety"
+            class="absolute inset-0 h-full w-full object-cover transition-opacity duration-300" loading="lazy" />
+
+          <video v-if="showVideo" :ref="(el) => setVideoRef(el)" :poster="posterUrl"
+            :src="`${video?.video?.url}#t=0.001`"
             class="absolute inset-0 h-full w-full object-cover duration-300 transition-all" muted loop playsinline
             preload="none" :class="{
             }" @loadeddata="videoLoading = false" />
