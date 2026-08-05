@@ -6,7 +6,7 @@ const open = ref(false)
 const items: NavigationMenuItem[] = [
   {
     label: 'Gems',
-    to: '/gems',
+    to: '/',
     icon: 'i-lucide-gem',
   },
   {

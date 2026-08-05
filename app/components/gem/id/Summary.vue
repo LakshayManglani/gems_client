@@ -44,13 +44,16 @@ const trust = [
     </div>
 
     <div>
-      <p class="text-3xl text-primary font-semibold leading-tight">
+      <p class="text-3xl text-primary font-semibold leading-tight font-mono">
         {{ price }}
       </p>
       <p class="text-sm text-muted">per carat</p>
     </div>
 
-    <p>Total: {{ formatPrice(gem.price * gem.weight) }}</p>
+    <p>Total:
+      <span class="font-mono">{{ formatPrice(gem.price * gem.weight) }}
+      </span>
+    </p>
 
     <UButton size="xl" block label="Order on WhatsApp" :to="whatsappLink" icon="logos:whatsapp-icon" color="primary"
       variant="solid" class="mt-2" />

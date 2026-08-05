@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import platform from '~/utils/platform'
+
 const columns = [
   {
     label: 'Company',
     children: [
       {
         label: 'Gems',
-        to: '/gems',
+        to: '/',
       },
       {
         label: 'Sell',

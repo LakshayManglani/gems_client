@@ -5,7 +5,7 @@
     <NuxtLoadingIndicator />
 
     <AppHeader />
-    <UMain class="flex flex-col">
+    <UMain class="flex flex-col relative">
       <slot />
     </UMain>
     <AppFooter />

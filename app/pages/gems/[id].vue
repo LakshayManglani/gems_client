@@ -18,7 +18,7 @@ const productLabel = computed(() => {
 })
 
 const breadcrumbs = computed(() => [
-  { label: 'Gems', to: '/gems' },
+  { label: 'Gems', to: '/' },
   { label: productLabel.value }
 ])
 </script>
@@ -26,7 +26,7 @@ const breadcrumbs = computed(() => [
 <template>
   <UContainer v-if="gem" class="py-8 pt-4 flex flex-col flex-1 gap-4">
     <UBreadcrumb :items="breadcrumbs" />
-    <div class="flex flex-col md:flex-row flex-1 gap-8">
+    <div class="flex flex-col lg:flex-row flex-1 gap-8">
       <GemIdGallery :gem />
 
       <div class="flex-1 flex flex-col gap-8">

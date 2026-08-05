@@ -108,6 +108,12 @@ watch(open, (nextOpen) => {
     playVideo(selected.value)
   }
 })
+
+const posterUrl = (url: string) => {
+  if (!url) return '';
+
+  return url.replace(/\.[^/.]+$/, '.jpg');
+};
 </script>
 
 <template>
@@ -122,12 +128,13 @@ watch(open, (nextOpen) => {
 
             <NuxtImg v-if="item.type === 'image'" provider="cloudinary" :src="item.image?.public_id" width="1024"
               height="576" fit="cover" quality="auto" format="auto"
-              class="w-full aspect-video object-cover rounded-md" />
+              class="w-full object-cover rounded-md aspect-square sm:aspect-video" />
 
             <video v-else :ref="(el) => setVideoRef(el, index)" @pointerdown="pauseVideo(index)"
               @pointerup="playVideo(index)" @pointercancel="playVideo(index)" @contextmenu.prevent loop muted
               playsinline webkit-playsinline disablePictureInPicture disableRemotePlayback preload="none"
-              class="w-full aspect-video object-cover rounded-md" :src="item.video?.url" />
+              class="w-full object-cover rounded-md aspect-square sm:aspect-video" :src="item.video?.url"
+              :poster="posterUrl(item.video?.url ?? '')" />
           </template>
         </UCarousel>
 
@@ -164,8 +171,16 @@ watch(open, (nextOpen) => {
             <NuxtImg v-if="item.type === 'image'" provider="cloudinary" :src="item.image?.public_id" width="120"
               height="120" fit="cover" quality="auto" format="auto" class="object-cover aspect-square" />
 
-            <NuxtImg v-else src="https://placehold.co/120x120?text=video" width="120" height="120" fit="cover"
-              quality="auto" format="auto" class="rounded-lg" />
+            <div v-else type="button" class="relative block aspect-square w-full h-full rounded-lg overflow-hidden">
+              <!-- Thumbnail Image -->
+              <img :src="posterUrl(item.video?.url ?? '')" alt="Video thumbnail"
+                class="w-full h-full object-cover transition-transform" />
+
+              <!-- Overlay & Play Icon -->
+              <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                <UIcon name="i-lucide-play" class="size-8 text-white fill-current drop-shadow-md" />
+              </div>
+            </div>
           </button>
         </template>
       </UCarousel>

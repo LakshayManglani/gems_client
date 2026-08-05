@@ -9,7 +9,10 @@ const gemsStore = useGemsStore();
 
 const gem = computed(() => gemsStore.getById(gemId));
 
-const primaryImage = computed(() => gem.value?.assets.find((asset) => asset.type === 'image'));
+const imageLoading = ref(true);
+const videoLoading = ref(true);
+
+// const primaryImage = computed(() => gem.value?.assets.find((asset) => asset.type === 'image'));
 
 const price = computed(() => formatPrice(gem.value?.price ?? 0));
 
@@ -70,15 +73,15 @@ if (import.meta.client) {
 }
 
 function onMouseEnter() {
-  if (!canHover || !video) return
+  if (!canHover || !video.value) return
 
   hoverTimer = setTimeout(() => {
     startVideo()
-  }, 750)
+  }, 0)
 }
 
 function onMouseLeave() {
-  if (!canHover || !video) return
+  if (!canHover || !video.value) return
 
   if (hoverTimer) {
     clearTimeout(hoverTimer)
@@ -118,55 +121,72 @@ onBeforeUnmount(() => {
 function setVideoRef(el: Element | ComponentPublicInstance | null) {
   videoRef = (el as HTMLVideoElement) ?? null
 }
+
+const posterUrl = computed(() => {
+  const url = video.value?.video?.url;
+  if (!url) return '';
+
+  return url.replace(/\.[^/.]+$/, '.jpg');
+});
 </script>
 
 <template>
-  <AppCard class="hover:-translate-y-1" v-if="gem">
+  <AppCard class="hover:-translate-y-1 hover:scale-105 group" v-if="gem">
     <article class="flex flex-col" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
 
       <!-- Image -->
       <NuxtLink :to="`/gems/${gem.id}`" class="relative aspect-square overflow-hidden">
         <div ref="mediaViewportRef" class="aspect-square">
-          <NuxtImg v-show="!showVideo" provider="cloudinary" :src="primaryImage?.image?.public_id" :modifiers="{
-            transformation: 'product-card'
-          }" class="aspect-square object-cover w-full rounded-md" />
-          <!-- Video -->
-          <video :ref="(el) => setVideoRef(el)" :src="video?.video?.url" v-show="showVideo"
-            class="h-full w-full object-cover" muted loop playsinline preload="none" />
+
+          <!-- Skeleton -->
+          <div class="absolute inset-0 transition-all duration-300" :class="{
+            'opacity-0': !(imageLoading || videoLoading)
+          }">
+            <USkeleton class="absolute inset-0 transition-opacity duration-300" />
+          </div>
+
+          <video :ref="(el) => setVideoRef(el)" :poster="posterUrl" :src="`${video?.video?.url}#t=0.001`"
+            class="absolute inset-0 h-full w-full object-cover duration-300 transition-all" muted loop playsinline
+            preload="none" :class="{
+            }" @loadeddata="videoLoading = false" />
+
         </div>
 
-        <UButton v-if="video" class="absolute bottom-2 right-2" :icon="showVideo ? 'i-lucide-image' : 'i-lucide-play'"
-          color="neutral" variant="solid" @click.prevent="toggleVideo" size="sm">
-          {{ showVideo ? 'Image' : 'Video' }}
-        </UButton>
-
-
-        <UBadge color="neutral" variant="solid" class="absolute bottom-2 left-2 bg-inverted/50 backdrop-blur">
+        <UBadge color="neutral" variant="solid"
+          class="absolute bottom-2 left-2 bg-inverted/50 backdrop-blur font-heading font-bold text-sm group:bg-inverted/50 duration-300">
           <UIcon name="i-lucide-gem" />
           <span>{{ lowerCase(gem.variety) }}</span>
         </UBadge>
+
+        <UButton v-if="video" class="absolute bottom-2 right-2 bg-inverted/50 backdrop-blur"
+          :icon="showVideo ? 'i-lucide-image' : 'i-lucide-play'" color="neutral" variant="solid"
+          @click.prevent="toggleVideo" size="sm">
+          {{ showVideo ? 'Image' : 'Video' }}
+        </UButton>
       </NuxtLink>
 
       <!-- Content -->
       <div class="p-4">
         <NuxtLink :to="`/gems/${gem.id}`" class="block">
-          <p class="text-2xl text-highlighted font-semibold leading-tight">
+          <p class="text-2xl text-highlighted font-semibold leading-tight font-mono">
             {{ price }}
           </p>
-          <p class="text-sm text-muted">per carat</p>
+          <p class="text-sm text-dimmed">per carat</p>
         </NuxtLink>
 
         <USeparator class="my-3" />
 
-        <div class="flex gap-1 text-sm text-muted flex-wrap justify-between items-center ">
+        <div
+          class="flex gap-1 text-sm text-muted flex-wrap justify-between items-center group-hover:text-default duration-300">
           <div class="flex items-center justify-center gap-2">
             <UIcon name="i-lucide-weight" />
-            <span class="text-highlighted">{{ gem.weight }} ct</span>
+            <span class="font-mono">{{ gem.weight }}</span>
+            <span>ct</span>
           </div>
 
           <div class="flex items-center justify-center gap-2">
             <UIcon name="i-lucide-shapes" />
-            <span class="text-highlighted">{{ lowerCase(gem.shape) }} </span>
+            <span>{{ lowerCase(gem.shape) }} </span>
           </div>
         </div>
       </div>

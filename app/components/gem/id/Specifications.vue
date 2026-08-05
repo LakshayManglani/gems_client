@@ -19,12 +19,13 @@ const specs = computed(() => [
   {
     label: 'Weight',
     value: gem.weight,
-    icon: 'i-lucide-scale'
+    icon: 'i-lucide-scale',
+    mono: true
   },
   {
     label: 'Shape',
     value: gem.shape,
-    icon: 'i-lucide-pentagon'
+    icon: 'i-lucide-pentagon',
   },
   {
     label: 'Clarity',
@@ -49,7 +50,9 @@ const specs = computed(() => [
           <UIcon :name="spec.icon" class="size-4" />
           <span class="font-medium">{{ spec.label }}</span>
         </div>
-        <div class="text-end text-highlighted">
+        <div class="text-end text-highlighted" :class="{
+          'font-mono': spec?.mono
+        }">
           {{ spec.value }}
         </div>
       </div>

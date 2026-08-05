@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui';
+import platform from '~/utils/platform'
 
 const items = ref<NavigationMenuItem[]>([
   {
     label: 'Gems',
-    to: '/gems',
+    to: '/',
     icon: 'i-lucide-gem',
   },
   {
