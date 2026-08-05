@@ -136,14 +136,22 @@ const paginationText = computed(() => {
   const pagination = data.value?.pagination;
 
   if (!pagination || pagination.total === 0) {
-    return "0 results";
+    return {
+      type: 'no-results',
+    };
   }
 
   const start = (pagination.page - 1) * pagination.limit + 1;
   const end = Math.min(pagination.page * pagination.limit, pagination.total);
 
-  return `${start}-${end} of ${pagination.total} results`;
+  return {
+    type: 'results',
+    start,
+    end,
+    total: pagination.total
+  };
 });
+
 </script>
 
 <template>
@@ -165,7 +173,15 @@ const paginationText = computed(() => {
               </div>
 
               <div class="text-sm text-muted">
-                {{ paginationText }}
+                <div v-if="paginationText.type === 'no-results'">0 results</div>
+                <div v-else>
+                  <span class="font-mono">{{ paginationText.start }}</span>
+                  <span>-</span>
+                  <span class="font-mono">{{ paginationText.end }}</span>
+                  <span> of </span>
+                  <span class="font-mono">{{ paginationText.total }}</span>
+                  <span> results</span>
+                </div>
               </div>
             </div>
 
@@ -179,6 +195,8 @@ const paginationText = computed(() => {
       </template>
 
       <div class="pt-8 relative flex flex-col flex-1">
+
+
         <!-- Mobile Filters -->
         <UDrawer v-model:open="open" :handle="false" handle-only dismissible inset>
           <UButton icon="i-lucide-filter" color="neutral" variant="subtle" size="xl" square
@@ -194,7 +212,15 @@ const paginationText = computed(() => {
                 </div>
 
                 <div class="text-sm text-muted">
-                  {{ paginationText }}
+                  <div v-if="paginationText.type === 'no-results'">0 results</div>
+                  <div v-else>
+                    <span class="font-mono">{{ paginationText.start }}</span>
+                    <span>-</span>
+                    <span class="font-mono">{{ paginationText.end }}</span>
+                    <span> of </span>
+                    <span class="font-mono">{{ paginationText.total }}</span>
+                    <span> results</span>
+                  </div>
                 </div>
               </div>
 

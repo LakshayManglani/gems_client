@@ -55,15 +55,15 @@ function commitMax() {
   <UFormField class="pb-3.5">
     <div class="mb-3 grid grid-cols-2 gap-3">
       <UFormField label="Min">
-        <UInput v-model="draftMin" @blur="commitMin" @keydown.enter="commitMin" />
+        <UInput v-model="draftMin" @blur="commitMin" @keydown.enter="commitMin" :icon :min :max class="font-mono" />
       </UFormField>
 
       <UFormField label="Max">
-        <UInput v-model="draftMax" @blur="commitMax" @keydown.enter="commitMax" />
+        <UInput v-model="draftMax" @blur="commitMax" @keydown.enter="commitMax" :icon :min :max class="font-mono" />
       </UFormField>
     </div>
 
-    <div class="px-1">
+    <div class="px-1 py-2">
       <USlider v-model="model.value" :min :max />
     </div>
   </UFormField>

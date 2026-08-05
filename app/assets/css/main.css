@@ -5,12 +5,34 @@
 /*   --ui-primary: black; */
 /* } */
 
-/* .dark { */
-/*   --ui-primary: white; */
-/* } */
+.dark {
+  --ui-bg: #141414;
+}
+
+@theme static {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-heading: 'Cormorant Garamond', serif;
+
+  --color-brand-50:  oklch(98.3% 0.010 85);
+  --color-brand-100: oklch(95.8% 0.022 84);
+  --color-brand-200: oklch(91.2% 0.042 83);
+  --color-brand-300: oklch(85.0% 0.065 82);
+  --color-brand-400: oklch(78.5% 0.088 80);
+  --color-brand-500: oklch(71.5% 0.105 78);
+  --color-brand-600: oklch(63.0% 0.108 74);
+  --color-brand-700: oklch(53.5% 0.095 70);
+  --color-brand-800: oklch(44.0% 0.078 66);
+  --color-brand-900: oklch(35.5% 0.060 62);
+  --color-brand-950: oklch(24.0% 0.040 58);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
 
 .light {
-  --ui-bg: #F0F0F0;
+  --ui-bg: #EBEBEB;
   --ui-bg-muted: var(--ui-color-neutral-100);
   --ui-bg-elevated: white;
   --ui-bg-accented: var(--ui-color-neutral-200);

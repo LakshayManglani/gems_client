@@ -27,10 +27,15 @@ export default defineNuxtConfig({
   appConfig: {
     ui: {
       colors: {
-        primary: 'blue',
-        neutral: 'zinc',
+        primary: 'brand',
+        neutral: 'neutral',
       },
     },
+    fonts: {
+      families: [
+        { name: 'Cormorant Garamond', provider: 'google' },
+      ]
+    }
   },
   routeRules: {
     "/gems": {
@@ -98,6 +103,7 @@ export default defineNuxtConfig({
       type: 'module',
       navigateFallback: '/',
       suppressWarnings: true
-    }
+    },
+
   },
 });

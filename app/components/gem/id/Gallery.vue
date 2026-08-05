@@ -5,7 +5,7 @@ const props = defineProps<{
   gem: Gem
 }>()
 
-const assets = computed(() => props.gem.assets)
+const assets = computed(() => [...props.gem.assets].reverse())
 
 const selected = ref(0)
 
@@ -108,6 +108,12 @@ watch(open, (nextOpen) => {
     playVideo(selected.value)
   }
 })
+
+const posterUrl = (url: string) => {
+  if (!url) return '';
+
+  return url.replace(/\.[^/.]+$/, '.jpg');
+};
 </script>
 
 <template>
@@ -122,12 +128,13 @@ watch(open, (nextOpen) => {
 
             <NuxtImg v-if="item.type === 'image'" provider="cloudinary" :src="item.image?.public_id" width="1024"
               height="576" fit="cover" quality="auto" format="auto"
-              class="w-full aspect-video object-cover rounded-md" />
+              class="w-full aspect-square sm:aspect-video object-cover rounded-md" />
 
             <video v-else :ref="(el) => setVideoRef(el, index)" @pointerdown="pauseVideo(index)"
               @pointerup="playVideo(index)" @pointercancel="playVideo(index)" @contextmenu.prevent loop muted
               playsinline webkit-playsinline disablePictureInPicture disableRemotePlayback preload="none"
-              class="w-full aspect-video object-cover rounded-md" :src="item.video?.url" />
+              class="w-full aspect-square sm:aspect-video object-cover rounded-md" :src="item.video?.url"
+              :poster="posterUrl(item.video?.url ?? '')" />
           </template>
         </UCarousel>
 

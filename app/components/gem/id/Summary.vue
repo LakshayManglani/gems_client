@@ -51,9 +51,9 @@ const trust = [
     </div>
 
     <p>Total: {{ formatPrice(gem.price * gem.weight) }}</p>
-
-    <UButton size="xl" block label="Order on WhatsApp" :to="whatsappLink" icon="logos:whatsapp-icon" color="primary"
-      variant="solid" class="mt-2" />
+    <!-- :to="whatsappLink" -->
+    <UButton size="xl" block label="Order on WhatsApp" icon="logos:whatsapp-icon" color="primary" variant="solid"
+      class="mt-2" />
 
     <div class="flex items-start justify-between pt-4 border-t border-default">
       <div v-for="item in trust" :key="item.label" class="flex flex-col items-center gap-1.5 text-center flex-1 px-1">

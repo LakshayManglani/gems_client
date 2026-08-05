@@ -22,14 +22,10 @@ export default function useSortFilter<SortByQueryKey extends string, SortOrderQu
 
   const model = computed({
     get: () => rawModel.value,
-    set(values) {
-      setModel(values);
+    set(value) {
+      setModel(value);
     }
   })
-
-  function isEqual(a: string, b: string) {
-    return a === b;
-  }
 
   function normalize(id: string) {
     return options.items.find((item) => item.id === id)
@@ -40,23 +36,25 @@ export default function useSortFilter<SortByQueryKey extends string, SortOrderQu
 
     if (next === undefined) return;
 
-    if (isEqual(rawModel.value, next.id)) return;
+    if (rawModel.value === next.id) return;
 
     rawModel.value = next.id;
   }
 
-  function toQueryValueForSortBy(id: string) {
+  function toQueryValue<K extends "order" | "by">(
+    id: string,
+    key: K,
+  ) {
     const item = normalize(id);
-    return (item && item.id !== options.defaultId) ? item.by : undefined;
-  }
-  function toQueryValueForSortOrder(id: string) {
-    const item = normalize(id);
-    return (item && item.id !== options.defaultId) ? item.order : undefined;
+
+    return (item && item.id !== options.defaultId)
+      ? item[key]
+      : undefined;
   }
 
   const queryEntries = computed<QueryEntry<SortOrderQueryKey | SortByQueryKey>[]>(() => [
-    [sortByQueryKey, toQueryValueForSortBy(model.value)],
-    [sortOrderQueryKey, toQueryValueForSortOrder(model.value)],
+    [sortByQueryKey, toQueryValue(model.value, 'by')],
+    [sortOrderQueryKey, toQueryValue(model.value, 'order')],
   ]);
 
   function reset() {
